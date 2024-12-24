@@ -41,9 +41,9 @@ def get_pngcomment_from_file(png_file):
 
 def get_prompt_from_imgfile(img_file):
     fn, ext = os.path.splitext(img_file)
-    if ext in (".jpg", ".jpeg", ".webp", ".avif"):
+    if ext.lower() in (".jpg", ".webp"):
         comment = get_exifcomment_from_file(img_file)
-    elif ext in (".png"):
+    elif ext.lower() in (".png"):
         comment = get_pngcomment_from_file(img_file)
     else:
         print(f"not support image file type : {ext}")

@@ -20,7 +20,7 @@ def process_files(input, output, imgtype, quality, keeptimestamp, max_workers):
         output = output.rstrip(os.sep)
         if not os.path.exists(output):
             os.makedirs(output)
-    elif ext in (".jpg", ".webp"):
+    elif ext.lower() in (".jpg", ".webp"):
         #output is file. file extension takes precedence
         imgtype = ext
         if os.path.isdir(input):
