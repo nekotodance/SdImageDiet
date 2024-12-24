@@ -43,7 +43,7 @@ StableDiffusionで作成したPNG,JPG,WEBP画像のプロンプト情報を保�
 #### 3)コマンドプロンプトを立ち上げて以下を実行する。この手順はインストールの一度のみ
 ###### 3-1)カレントフォルダの移動移動
     c:
-    cd C:\tool\git\PromptPng2Jpg
+    cd C:\tool\git\SdImageDiet
 ###### 3-2)venv環境を作成、activate
     py -m venv venv
     .\venv\Scripts\activate.bat
