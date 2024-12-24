@@ -30,7 +30,7 @@ def process_files(input, output, imgtype, quality, keeptimestamp, max_workers):
         return
     in_files = []
     if os.path.isfile(input):
-        in_files = [input] if input.lower().endswith((".png",".webp",".avif",".jpg",".jpeg")) else []
+        in_files = [input] if input.lower().endswith(('.png', '.jpg', '.webp')) else []
     elif os.path.isdir(input):
         # Check output files for duplicates
         duplicatefile = check_duplicate_file_in_folder(input, None)
@@ -39,7 +39,7 @@ def process_files(input, output, imgtype, quality, keeptimestamp, max_workers):
             return
 
         for root, _, files in os.walk(input):
-            in_files.extend([os.path.join(root, f) for f in files if f.lower().endswith((".png",".webp",".avif",".jpg",".jpeg"))])
+            in_files.extend([os.path.join(root, f) for f in files if f.lower().endswith(('.png', '.jpg', '.webp'))])
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = [executor.submit(convert_imgfiles, img_file, output, imgtype, quality, keeptimestamp) for img_file in in_files]
@@ -84,7 +84,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Convert PNG to JPG with metadata.")
-    parser.add_argument("input", type=str, help="Input file or directory containing Image files. (png, webp, avif, jpg, jpeg)")
+    parser.add_argument("input", type=str, help="Input file or directory containing Image files. (png, webp, jpg)")
     parser.add_argument("output", type=str, help="Output file or Output directory")
     parser.add_argument("--imgtype", type=str, default="jpg", help="Image type. def:jpg, webp. If output is a file specification, the file extension takes precedence.")
     parser.add_argument("--quality", type=int, default=85, help="quality (1-100). Default is 85.")

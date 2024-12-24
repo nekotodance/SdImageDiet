@@ -64,7 +64,7 @@ StableDiffusionで作成したPNG,JPG,WEBP画像のプロンプト情報を保�
 #### 1)アプリ上に複数の画像ファイルかフォルダをドラッグ＆ドロップしてください  
 現時点でPNG、JPG、WEBPの画像ファイルの入力に対応しています  
 
-注意１：フォルダをDropした場合は下層フォルダを再帰的にチェックします。あまりに上位のフォルダをDropしないように注意してください
+注意１：フォルダをDropした場合は下層フォルダを再帰的にチェックします。あまりに上位のフォルダをDropしないように注意してください  
 注意２：jpg指定「test.PNG、test.WEBP」の場合、どちらも出力ファイル名がtest.jpgとなりますのでファイル名重複でエラーとします  
 注意３：Dropしたフォルダ、もしくはその配下に2-5)で説明するOutput Dirが含まれる場合は対象外とします  
 
@@ -93,23 +93,22 @@ jpg指定で出力フォルダ__outputdirの場合、変換した画像は以下
 c:/data/test.PNG -> c:/data/__outputdir/test.jpg
 
 #### 3)Convertボタンを押す  
-変換を開始します  
-処理完了まではCanselボタンにより中断できます  
-処理中の状況を[変換済みファイル数/総数]でお知らせします  
-処理が正常に完了すればok.wavを再生します
+- 変換を開始し、処理完了まではCanselボタンにより中断できます  
+- 処理中の状況をstatus部分に[変換済みファイル数/総数]で表示します  
+処理が正常に完了すればok.wavを再生します  
 
 #### status
-ファイルのドラッグ＆ドロップ時や変換処理状況、変換結果などを表示します  
+ドラッグ＆ドロップ時のファイル数や変換処理状況、変換結果などを表示します  
 エラーのBeep音ng.wavが再生された場合、ここの理由を参照してください  
 
 ## 利用方法（コマンドライン版）
 以下の方法で利用できます  
 usage: SdImageDiet.py [-h] [--imgtype IMGTYPE] [--quality QUALITY] [--threads THREADS] [--keeptimestamp] input output  
   
-Convert PNG to JPG with metadata.  
+Convert Image file to JPG or WEBP with metadata.  
   
 positional arguments:  
-  input              : Input file or directory containing Image files. (png, webp, avif, jpg, jpeg)  
+  input              : Input file or directory containing Image files. (png, jpg, webp)  
   output             : Output file or Output directory  
   
 options:  
@@ -120,9 +119,9 @@ options:
   --keeptimestamp    : keep the original timestamp of input files.  
 
 ## 注意事項
-- Prompt情報はjpgのExifのUserCommentに保存しています  
-- Automatic1111とForgeの出力したPNGファイルでしか確認していません  
-- アプリによってはjpgのExifコメントの文字コードを正確に判断できないかもしれませんが、ForgeのPNG Infoでの読み込みが正常に行われる事を優先しています  
+- Prompt情報はExifのUserCommentに保存しています  
+- Automatic1111の出力したPNG、Forgeの出力したPNG、WEBPファイルでしか確認していません  
+- アプリによってはExifコメントの文字コードを正確に判断できないかもしれませんが、ForgeのPNG Infoでの読み込みが正常に行われる事を優先しています  
 
 ## 変更履歴
 - 0.1.0 初版
