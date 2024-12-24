@@ -33,7 +33,7 @@ StableDiffusionで作成したPNG,JPG,WEBP画像のプロンプト情報を保�
 インストールフォルダをC:\tool\git\SdImageDietとした場合で説明  
 ！Pythonはインストールされていて最低限の知識はあるものとします！  
 
-#### 1)C:\tool\git\PromptPng2Jpgを作成
+#### 1)C:\tool\git\SdImageDietを作成
 #### 2)以下のファイルを格納
   sdfileUtility.py  
   SdImageDiet.py  
@@ -43,7 +43,7 @@ StableDiffusionで作成したPNG,JPG,WEBP画像のプロンプト情報を保�
   ok.wav  
 
 #### 3)コマンドプロンプトを立ち上げて以下を実行する。この手順はインストールの一度のみ
-###### 3-1)カレントフォルダの移動移動
+###### 3-1)カレントフォルダの移動
     c:
     cd C:\tool\git\SdImageDiet
 ###### 3-2)venv環境を作成、activate
