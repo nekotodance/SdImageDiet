@@ -60,7 +60,7 @@ StableDiffusionで作成したPNG,JPG,WEBP画像のプロンプト情報を保�
   今後は作成したショートカットをダブルクリックでアプリのように使えます  
 
 ## 利用方法（GUI版）
-![SdImageDietGUI-image](docs/SdImageDietGUI-image002.jpg)
+![SdImageDiet-image002](docs/SdImageDiet-image002.jpg)
 #### 1)アプリ上に複数の画像ファイルかフォルダをドラッグ＆ドロップしてください  
 現時点でPNG、JPG、WEBPの画像ファイルの入力に対応しています  
 
