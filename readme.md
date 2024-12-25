@@ -1,6 +1,7 @@
 ## SdImageDietについて 0.1.1
 StableDiffusionで作成したPNG,JPG,WEBP画像のプロンプト情報を保持したまま「マルチスレッド」で高速にJPG,WEBP画像に変換します  
 主にPrompt情報は後で参考にしたいが、画像品質を犠牲にしてファイルサイズを小さくしたい利用シーンを想定しています  
+また、比較的どうでも良い画像ファイルの容量削減なんかにも便利です  
 
 ## 特徴
 - 変換後のファイルでもPNG Infoタブで読み込んでtxt2txtなどに送る事が可能  
@@ -120,6 +121,7 @@ options:
   --keeptimestamp    : keep the original timestamp of input files.  
 
 ## 注意事項
+- 厳密なファイルチェックはしていないので気をつけてください（例えばとてつもなく大きいサイズなど）  
 - Prompt情報はExifのUserCommentに保存しています  
 - Automatic1111の出力したPNG、Forgeの出力したPNG、WEBPファイルでしか確認していません  
 - アプリによってはExifコメントの文字コードを正確に判断できないかもしれませんが、ForgeのPNG Infoでの読み込みが正常に行われる事を優先しています  
