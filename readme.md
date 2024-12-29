@@ -2,6 +2,7 @@
 StableDiffusionで作成したPNG,JPG,WEBP画像のプロンプト情報を保持したまま「マルチスレッド」で高速にJPG,WEBP画像に変換します  
 主にPrompt情報は後で参考にしたいが、画像品質を犠牲にしてファイルサイズを小さくしたい利用シーンを想定しています  
 また、比較的どうでも良い画像ファイルの容量削減なんかにも便利です  
+![SdImageDiet-image001](docs/SdImageDiet-image001.jpg)
 
 ## 特徴
 - 変換後のファイルでもPNG Infoタブで読み込んでtxt2txtなどに送る事が可能  
@@ -12,9 +13,7 @@ StableDiffusionで作成したPNG,JPG,WEBP画像のプロンプト情報を保�
 - お好みでGUIでもCUIでも利用可能  
 
 ※1:Ryzen5 5600で1024x1344dotのPNG1000枚をJPGに変換するのに7秒程度、WEBPであれば1分強  
-※2:GUI版のみ
-
-![SdImageDiet-image001](docs/SdImageDiet-image001.jpg)
+※2:GUI版のみ  
 
 ## インストール方法（簡易）
 [簡易インストール版zipのダウンロード] https://github.com/nekotodance/SdImageDiet/releases/download/latest/SdImageDietGUI.zip
