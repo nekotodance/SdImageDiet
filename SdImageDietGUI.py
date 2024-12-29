@@ -138,6 +138,7 @@ class MainWindow(QMainWindow):
 
         # ボタンレイアウト（横並び）
         self.buttonLayout = QHBoxLayout()
+        self.buttonLayout.addStretch()  # ボタンの押し間違いがたまにあったのでスペースを追加
         # 変換ボタン
         self.convertButton = QPushButton('Convert')
         self.convertButton.setFixedHeight(40)  # ボタンの高さを調整
