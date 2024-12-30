@@ -32,7 +32,7 @@ Write-Host "----------------------------------------"
 # activate
 . .\venv\Scripts\activate.ps1
 # install python library
-python -m pip install PyQt5 Image piexif
+python -m pip install PyQt5 Image piexif pillow-avif-plugin
 
 Write-Host "----------------------------------------"
 Write-Host "create shortcut file."

@@ -3,30 +3,28 @@ from PIL import Image, PngImagePlugin
 from PIL.ExifTags import TAGS, GPSTAGS
 import piexif
 import piexif.helper
+import pillow_avif
 
-def get_exifcomment_from_file(imag_file):
+def get_exifcomment_from_file(file):
     try:
-        img = Image.open(imag_file)
-        exif_data = img._getexif()
+        img = Image.open(file)
+        exif_data = img.info.get("exif")
         if exif_data is None:
             return None
-        exif = {TAGS.get(tag): value for tag, value in exif_data.items() if tag in TAGS}
-        comment = exif.get("UserComment")
-        if not comment:
-            comment = exif.get("ImageDescription")
+        exif_dict = piexif.load(exif_data)
+        comment = exif_dict["Exif"].get(piexif.ExifIFD.UserComment)
         if comment.startswith(b'UNICODE\x00'):
             comment = comment[len(b'UNICODE\x00'):]
         comment = comment.replace(b'\x00', b'')
         comment = comment.decode('utf-8')
-
         return comment
     except Exception as e:
-        print(f"Error get_exifcomment_from_file {imag_file}: {e}")
+        print(f"Error get_avifcomment_from_file {file}: {e}")
         return None
 
-def get_pngcomment_from_file(png_file):
+def get_pngcomment_from_file(file):
     try:
-        with Image.open(png_file) as img:
+        with Image.open(file) as img:
             if isinstance(img, PngImagePlugin.PngImageFile):
                 metadata = img.info.get("parameters", "") #1:sd1111 or forge png
                 #--------
@@ -35,13 +33,13 @@ def get_pngcomment_from_file(png_file):
                 if not metadata:
                     metadata = img.info.get("prompt", "") #2:comfyUI png
     except Exception as e:
-        print(f"Error get_pngcomment_from_file {png_file}: {e}")
+        print(f"Error get_pngcomment_from_file {file}: {e}")
         return None
     return metadata
 
 def get_prompt_from_imgfile(img_file):
     fn, ext = os.path.splitext(img_file)
-    if ext.lower() in (".jpg", ".webp"):
+    if ext.lower() in (".jpg", ".webp", ".avif"):
         comment = get_exifcomment_from_file(img_file)
     elif ext.lower() in (".png"):
         comment = get_pngcomment_from_file(img_file)

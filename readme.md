@@ -1,5 +1,5 @@
-## SdImageDietについて 0.1.2
-StableDiffusionで作成したPNG,JPG,WEBP画像のプロンプト情報を保持したまま「マルチスレッド」で高速にJPG,WEBP画像に変換します  
+## SdImageDietについて 0.1.3
+StableDiffusionで作成したPNG,JPG,WEBP,AVIF画像のプロンプト情報を保持したまま「マルチスレッド」で高速にJPG,WEBP画像に変換します  
 主にPrompt情報は後で参考にしたいが、画像品質を犠牲にしてファイルサイズを小さくしたい利用シーンを想定しています  
 また、比較的どうでも良い画像ファイルの容量削減なんかにも便利です  
 ![SdImageDiet-image001](docs/SdImageDiet-image001.jpg)
@@ -49,7 +49,7 @@ StableDiffusionで作成したPNG,JPG,WEBP画像のプロンプト情報を保�
     py -m venv venv
     .\venv\Scripts\activate.bat
 ###### 3-3)利用するライブラリをインストール
-    pip install PyQt5 Image piexif
+    pip install PyQt5 Image piexif pillow-avif-plugin
 ###### 3-4)動作確認
     py SdImageDietGUI.py
     
@@ -135,6 +135,7 @@ output dirの追加をドロップしたパスではなく、個別の画像フ�
 もしかすると複数フォルダのドロップを禁止して、入力パスに対してoutput dirを付与する方が使い勝手が良いのかもしれません。。（検討中）  
 
 ## 変更履歴
+- 0.1.3 avifの入力に対応
 - 0.1.2 Convertボタンの押し間違いをしやすいのでスペースを追加
 - 0.1.1 拡張子が大文字だった場合の判定ミスを修正
 - 0.1.0 初版

@@ -3,6 +3,9 @@ from concurrent.futures import ThreadPoolExecutor
 import shutil
 import sdfileUtility
 
+# 定義
+SUPPORT_INPUT_EXT = (".png", ".jpg", ".webp",".avif")
+
 def convert_imgfile(infile, outfile, imgtype, quality, keeptimestamp):
     sdfileUtility.convert_image(infile, outfile, imgtype, quality)
     if keeptimestamp:
@@ -30,7 +33,7 @@ def process_files(input, output, imgtype, quality, keeptimestamp, max_workers):
         return
     in_files = []
     if os.path.isfile(input):
-        in_files = [input] if input.lower().endswith(('.png', '.jpg', '.webp')) else []
+        in_files = [input] if input.lower().endswith(SUPPORT_INPUT_EXT) else []
     elif os.path.isdir(input):
         # Check output files for duplicates
         duplicatefile = check_duplicate_file_in_folder(input, None)
@@ -39,7 +42,7 @@ def process_files(input, output, imgtype, quality, keeptimestamp, max_workers):
             return
 
         for root, _, files in os.walk(input):
-            in_files.extend([os.path.join(root, f) for f in files if f.lower().endswith(('.png', '.jpg', '.webp'))])
+            in_files.extend([os.path.join(root, f) for f in files if f.lower().endswith(SUPPORT_INPUT_EXT)])
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = [executor.submit(convert_imgfiles, img_file, output, imgtype, quality, keeptimestamp) for img_file in in_files]
@@ -58,7 +61,7 @@ def check_duplicate_file_in_folder(folder_path, outputfolder):
         if os.path.basename(os.path.normpath(root)) == outputfolder:
             continue
         for file in files:
-            if file.lower().endswith(('.png', '.jpg', '.webp')):
+            if file.lower().endswith(SUPPORT_INPUT_EXT):
                 filename = os.path.splitext(root + "/" + file)[0]
                 if filename in img_files:
                     return filename # duplicate
@@ -73,7 +76,7 @@ def check_duplicate_file(input_paths, outputfolder):
             filename = check_duplicate_file_in_folder(path, outputfolder)
             if filename:
                 return filename # duplicate
-        elif path.lower().endswith(('.png', '.jpg', '.webp')):  # 対象画像ファイルの場合
+        elif path.lower().endswith(SUPPORT_INPUT_EXT):  # 対象画像ファイルの場合
             filename = os.path.splitext(path)[0]
             if filename in all_files:
                 return filename # duplicate

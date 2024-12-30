@@ -299,7 +299,7 @@ class MainWindow(QMainWindow):
         for path in file_paths:
             if os.path.isdir(path):  # フォルダの場合
                 all_files.extend(self.get_img_files_in_folder(path))
-            elif path.lower().endswith(('.png', '.jpg', '.webp')):  # 対象画像ファイルの場合
+            elif path.lower().endswith(SdImageDiet.SUPPORT_INPUT_EXT):  # 対象画像ファイルの場合
                 all_files.append(path)
 
         if all_files:
@@ -319,9 +319,9 @@ class MainWindow(QMainWindow):
             if os.path.basename(os.path.normpath(root)) == self.outputdir:
                 continue
             for file in files:
-                if file.lower().endswith(('.png', '.jpg', '.webp')):
+                if file.lower().endswith(SdImageDiet.SUPPORT_INPUT_EXT):
                     #png_files.append(os.path.join(root, file))
-                    img_files.append(root + "/" + file) #ファイルのドラッグドロップ時のパスセパレータに合わせる
+                    img_files.append(f"{root}/{file}") #ファイルのドラッグドロップ時のパスセパレータに合わせる
         return img_files
 
     def play_wave(self, file_name):
