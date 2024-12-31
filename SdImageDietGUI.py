@@ -228,6 +228,7 @@ class MainWindow(QMainWindow):
 
         self.cancelButton.setEnabled(True)  # キャンセルボタンを有効化
         self.convertButton.setEnabled(False)  # 変換ボタンを無効化
+        self.clearButton.setEnabled(False)
 
         self.statusBar.showMessage('Converting...')
         self.convert_files(self.file_paths)
@@ -241,6 +242,7 @@ class MainWindow(QMainWindow):
         self.statusBar.showMessage('Conversion cancelled.')
         self.convertButton.setEnabled(True)
         self.cancelButton.setEnabled(False)
+        self.clearButton.setEnabled(True)
 
     # クリアボタン処理
     def clear_conversion(self):
@@ -270,6 +272,7 @@ class MainWindow(QMainWindow):
             print(mes)
             self.convertButton.setEnabled(True)
             self.cancelButton.setEnabled(False)
+            self.clearButton.setEnabled(True)
             self.play_wave(self.soundok)
         else:
             mes = f'Converting... [{self.converted_files:0{self.totalfilestrlen}}/{self.totalfilenum:0{self.totalfilestrlen}}]'
