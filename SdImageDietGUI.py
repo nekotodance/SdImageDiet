@@ -172,6 +172,10 @@ class MainWindow(QMainWindow):
         )
         self.cancelButton.setEnabled(False)  # 初期状態では無効化
         self.buttonLayout.addWidget(self.cancelButton)
+        # クリアボタン
+        self.clearButton = QPushButton('Clear')
+        self.clearButton.setFixedHeight(40)  # ボタンの高さを調整
+        self.buttonLayout.addWidget(self.clearButton)
         self.layout.addLayout(self.buttonLayout)
 
         # ステータスバーを追加
@@ -182,6 +186,7 @@ class MainWindow(QMainWindow):
         # ボタン押下処理
         self.convertButton.clicked.connect(self.start_conversion)
         self.cancelButton.clicked.connect(self.cancel_conversion)
+        self.clearButton.clicked.connect(self.clear_conversion)
 
         # 値変更時に変数を更新
         self.qualitySpinBox.valueChanged.connect(self.update_jpgquality_values)
@@ -236,6 +241,11 @@ class MainWindow(QMainWindow):
         self.statusBar.showMessage('Conversion cancelled.')
         self.convertButton.setEnabled(True)
         self.cancelButton.setEnabled(False)
+
+    # クリアボタン処理
+    def clear_conversion(self):
+        self.fileListWidget.clear()  # リストをクリア
+        self.statusBar.showMessage('Clear lists.')
 
     # 変換処理
     def convert_files(self, file_paths):
