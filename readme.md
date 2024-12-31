@@ -81,7 +81,7 @@ c:/data/test.PNG -> c:/data/__outputdir/test.jpg
 - 処理中の状況をstatus部分に[変換済みファイル数/総数]で表示します  
 処理が正常に完了すればok.wavを再生します  
 
-#### 3) Clearボタン  
+#### 4) Clearボタン  
 ドラッグ＆ドロップしたファイルリストをクリアします  
 
 #### status表示部
