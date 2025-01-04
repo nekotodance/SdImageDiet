@@ -2,7 +2,7 @@ import sys
 import os
 import time
 from PyQt5.QtCore import Qt, QRunnable, QThreadPool, QTimer
-from PyQt5.QtGui import QDragEnterEvent, QDropEvent
+from PyQt5.QtGui import QDragEnterEvent, QDropEvent, QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QSpinBox, QListWidget, QComboBox, QStatusBar, QCheckBox, QLineEdit
 from PyQt5.QtMultimedia import QSound
 from PIL import Image
@@ -75,6 +75,9 @@ class MainWindow(QMainWindow):
 
         self.totalfilenum = 0   # 変換対象のトータルファイル数
         self.totalfilestrlen = 0    # 変換対象のトータルファイル数を文字列化した時の桁数
+        self.converted_success = 0  # 変換したファイル数
+        self.converted_error = 0  # 変換に失敗したファイル数
+
         self.pydir = os.path.dirname(os.path.abspath(__file__))
 
         self.setWindowTitle('SD Image Filesize Diet')
@@ -85,9 +88,9 @@ class MainWindow(QMainWindow):
         # 起動時にウィンドウ設定を復元
         self.load_settings()
 
-        self.setAcceptDrops(True)
-
         # UIの設定
+        self.setWindowIcon(QIcon("res/SdImageDietGUI.ico"))
+        self.setAcceptDrops(True)
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)
 
@@ -199,7 +202,6 @@ class MainWindow(QMainWindow):
         self.thread_pool = QThreadPool()
 
         self.file_paths = []  # 変換するファイルのリスト
-        self.converted_files = 0  # 変換したファイル数
         self.start_time = 0  # 変換開始時間
 
         self.workers = []  # Workerのリスト
@@ -220,7 +222,8 @@ class MainWindow(QMainWindow):
             self.play_wave(self.soundng)
             return
 
-        self.converted_files = 0
+        self.converted_success = 0
+        self.converted_error = 0
         self.start_time = time.time()  # 変換開始時刻
 
         self.totalfilenum = len(self.file_paths)    # 変換対象ファイル数
@@ -262,20 +265,31 @@ class MainWindow(QMainWindow):
     def on_complete(self, success):
         # 変換が完了した後に呼ばれるコールバック
         if success:
-            self.converted_files += 1
-
+            self.converted_success += 1
+        else:
+            self.converted_error += 1
+        # 変換が成功、もしくは失敗した総数
+        donefilenum = self.converted_success + self.converted_error
         # すべてのファイルが変換されたか確認
-        if self.converted_files == self.totalfilenum:
+        if donefilenum == self.totalfilenum:
             elapsed_time = time.time() - self.start_time  # 経過時間
-            mes = f'Conversion complete! {self.converted_files} files converted in {elapsed_time:.2f} seconds.'
+            if (self.converted_error == 0):
+                # 変換がすべて成功している場合
+                mes = f'Conversion complete! {donefilenum} files converted. {elapsed_time:.2f} seconds.'
+            else:
+                # 失敗を含む場合
+                mes = f'Conversion complete! sccess:{self.converted_success}, error:{self.converted_error}. {elapsed_time:.2f} seconds.'
             self.statusBar.showMessage(mes)
             print(mes)
             self.convertButton.setEnabled(True)
             self.cancelButton.setEnabled(False)
             self.clearButton.setEnabled(True)
-            self.play_wave(self.soundok)
+            if (self.converted_error == 0):
+                self.play_wave(self.soundok)
+            else:
+                self.play_wave(self.soundng)
         else:
-            mes = f'Converting... [{self.converted_files:0{self.totalfilestrlen}}/{self.totalfilenum:0{self.totalfilestrlen}}]'
+            mes = f'Converting... [{donefilenum:0{self.totalfilestrlen}}/{self.totalfilenum:0{self.totalfilestrlen}}]'
             self.statusBar.showMessage(mes)
             pvsubfunc.dbgprint(mes)
 
