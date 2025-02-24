@@ -87,7 +87,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Convert PNG to JPG with metadata.")
-    parser.add_argument("input", type=str, help="Input file or directory containing Image files. (png, webp, jpg)")
+    parser.add_argument("input", type=str, help="Input file or directory containing Image files. (png, webp, jpg, avif)")
     parser.add_argument("output", type=str, help="Output file or Output directory")
     parser.add_argument("--imgtype", type=str, default="jpg", help="Image type. def:jpg, webp. If output is a file specification, the file extension takes precedence.")
     parser.add_argument("--quality", type=int, default=85, help="quality (1-100). Default is 85.")

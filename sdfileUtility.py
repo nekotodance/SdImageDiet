@@ -23,6 +23,7 @@ def get_exifcomment_from_file(file):
         return None
 
 def get_pngcomment_from_file(file):
+    metadata = None
     try:
         with Image.open(file) as img:
             if isinstance(img, PngImagePlugin.PngImageFile):
