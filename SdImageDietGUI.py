@@ -23,6 +23,8 @@ OUTPUT_DIRNAME = "setting-outputdirname"
 SOUND_NG = "sound-ng"
 SOUND_OK = "sound-ok"
 
+QUALITY_LIST = (40,85)
+
 # マルチスレッド用ワーカークラス
 class Worker(QRunnable):
     def __init__(self, infile, outdir, imgtype, quality, keepTimestamp, on_complete):
@@ -105,19 +107,26 @@ class MainWindow(QMainWindow):
         # 設定値レイアウト１（横並び）
         self.settingLayout1 = QHBoxLayout()
         # 品質設定のラベルとスピンボックス
-        self.settingLayout1.addWidget(QLabel('Quality def:85'))
+        self.settingLayout1.addWidget(QLabel('Quality'))
+        self.convertBtns = []
+        for i in range(len(QUALITY_LIST)):
+            self.convertBtns.append(QPushButton(str(QUALITY_LIST[i])))
+            self.convertBtns[i].setFixedWidth(48)
+            self.settingLayout1.addWidget(self.convertBtns[i])
         self.qualitySpinBox = QSpinBox()
         self.qualitySpinBox.setMinimum(1)  # 最小1
         self.qualitySpinBox.setMaximum(100)  # 最大100
         self.qualitySpinBox.setValue(self.quality)  # 初期値85
+        self.qualitySpinBox.setStyleSheet("QSpinBox { font-size: 20px; font-weight: bold; }")
         self.settingLayout1.addWidget(self.qualitySpinBox)
         # スレッド数設定のラベルとスピンボックス
-        self.settingLayout1.addWidget(QLabel('Number of Threads'))
+        self.settingLayout1.addWidget(QLabel('Threads'))
         self.threadSpinBox = QSpinBox()
         self.threadSpinBox.setMinimum(1)
         self.threadSpinBox.setMaximum(os.cpu_count())  # 最大PCのCPUコア数
         self.threadSpinBox.setValue(self.threadsnum)  # デフォルト値はCPUコア数-1
         self.settingLayout1.addWidget(self.threadSpinBox)
+        self.settingLayout1.addStretch()
         # タイムスタンプ維持のチェックボックス
         self.keepTimestampCheckBox = QCheckBox('keep timestamp')
         self.keepTimestampCheckBox.setChecked(self.keepTimestamp)
@@ -131,6 +140,7 @@ class MainWindow(QMainWindow):
         self.imgTypeComboBox = QComboBox()
         self.imgTypeComboBox.addItems(["jpg", "webp"])
         self.imgTypeComboBox.setCurrentText(self.imgtype)
+        self.imgTypeComboBox.setStyleSheet("QComboBox { font-size: 20px; font-weight: bold; }")
         self.settingLayout2.addWidget(self.imgTypeComboBox)
         # 出力フォルダ名のラベルとテキストボックス
         self.settingLayout2.addWidget(QLabel('Output Dir'))
@@ -197,6 +207,12 @@ class MainWindow(QMainWindow):
         self.keepTimestampCheckBox.stateChanged.connect(self.update_keeptimestamp_check)
         self.imgTypeComboBox.currentIndexChanged.connect(self.update_imgtype_changed)
         self.outdirLineEdit.textChanged.connect(self.update_outdir_changed)
+
+        # クオリティをボタンで指定
+        for i in range(len(QUALITY_LIST)):
+            self.convertBtns[i].clicked.connect(lambda _, i=i: self.qualitySpinBox.setValue(QUALITY_LIST[i]))
+        # Qualty指定のボタンを強調する
+        self.update_jpgquality_values()
 
         # スレッドプールの初期化
         self.thread_pool = QThreadPool()
@@ -296,6 +312,14 @@ class MainWindow(QMainWindow):
     # 設定値更新時処理
     def update_jpgquality_values(self):
         self.quality = self.qualitySpinBox.value()
+        index = -1
+        if self.quality in QUALITY_LIST:
+            index = QUALITY_LIST.index(self.quality)
+        for i in range(len(QUALITY_LIST)):
+            val = str(QUALITY_LIST[i])
+            if i == index:
+                val = f"[ {val} ]"
+            self.convertBtns[i].setText(val)
     def update_threadsnum_values(self):
         self.threadsnum = self.threadSpinBox.value()
     def update_keeptimestamp_check(self):
