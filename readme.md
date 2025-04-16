@@ -1,4 +1,4 @@
-## SdImageDietについて 0.1.7
+## SdImageDietについて 0.1.8
 StableDiffusionで作成したPNG,JPG,WEBP,AVIF画像のプロンプト情報を保持したまま【**マルチスレッド**】で高速にJPG,WEBP画像に変換します  
 主にPrompt情報は後で参考にしたいが、画像品質を犠牲にしてファイルサイズを小さくしたい利用シーンを想定しています  
 また、比較的どうでも良い画像ファイルの容量削減なんかにも便利です  
@@ -38,11 +38,11 @@ StableDiffusionで作成したPNG,JPG,WEBP,AVIF画像のプロンプト情報を
 
 ## インストール方法（手動）
 - gitでリポジトリを取得  
-    git clone https://github.com/nekotodance/SdImageDiet
+  `git clone https://github.com/nekotodance/SdImageDiet`
 - 必要なライブラリ  
-    pip install PyQt5 Image piexif pillow-avif-plugin
+  `pip install -r requirements.txt`
 - 実行方法  
-    Python SdImageDietGUI.py
+  `Python SdImageDietGUI.py`
 
 ## 利用方法（GUI版）
 ![SdImageDiet-image002](docs/SdImageDiet-image002.jpg)
@@ -123,6 +123,7 @@ options:
 > 複数フォルダにまたがるファイルの入力をを禁止して、入力パスに対してoutput dirを付与する方が使い勝手が良いのかもしれません。。（検討中）  
 
 ## 変更履歴
+- 0.1.8 pipライブラリのバージョンを固定に修正
 - 0.1.7 QualityとImgTypeを少し目立つように修正、他
 - 0.1.6 主にreadmeの修正、またメタ情報を持たないファイルを入力した場合に落ちる場合があったのを修正
 - 0.1.5 エラーハンドリングの追加（処理中に画像の移動や削除をした場合を対処）など
