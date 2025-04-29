@@ -1,13 +1,17 @@
 import sys
 import os
 import time
-from PyQt5.QtCore import Qt, QRunnable, QThreadPool, QTimer
-from PyQt5.QtGui import QDragEnterEvent, QDropEvent, QIcon
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QSpinBox, QListWidget, QComboBox, QStatusBar, QCheckBox, QLineEdit
+from PyQt5.QtCore import Qt, QRunnable, QThreadPool, QTimer, QUrl
+from PyQt5.QtGui import QDragEnterEvent, QDropEvent, QIcon, QDesktopServices
+from PyQt5.QtWidgets import (
+    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
+    QLabel, QSpinBox, QListWidget, QComboBox, QStatusBar, QCheckBox, QLineEdit,
+    QMenu, QAction
+)
 from PyQt5.QtMultimedia import QSound
 from PIL import Image
 import SdImageDiet
-import pvsubfunc
+import subfunc
 
 # 設定ファイル
 SETTINGS_FILE = "SdImageDietGUI_settings.json"
@@ -24,6 +28,13 @@ SOUND_NG = "sound-ng"
 SOUND_OK = "sound-ok"
 
 QUALITY_LIST = (40,85)
+
+# ログファイル
+LOGS_FILE = "SdImageDietGUI.log"
+#スレッドセーフなログファイル出力機能
+logger = subfunc.ThreadSafeLogger(LOGS_FILE)
+#ファイル変換の成功時もログファイルに出力する場合は以下の行を有効に
+#logger.setLevel(logging.DEBUG) # ログレベルをDEBUGに設定
 
 # マルチスレッド用ワーカークラス
 class Worker(QRunnable):
@@ -53,11 +64,14 @@ class Worker(QRunnable):
             SdImageDiet.convert_imgfile(self.infile, outfile, imgext, self.quality, self.keepTimestamp)
             if self._is_cancelled:
                 return  # キャンセルされた場合は処理を終了
+            logger.log("debug", f"convert ok : {self.infile}")
             self.on_complete(True)
         except Exception as e:
             print(f"Error converting {self.infile}: {e}")
             if self._is_cancelled:
                 return  # キャンセルされた場合は処理を終了
+            logger.log("error", f"convert error : {self.infile}")
+            logger.log("error", e)
             self.on_complete(False)
 
     def cancel(self):
@@ -80,7 +94,10 @@ class MainWindow(QMainWindow):
         self.converted_success = 0  # 変換したファイル数
         self.converted_error = 0  # 変換に失敗したファイル数
 
+        #pythonファイル実行時のパス
         self.pydir = os.path.dirname(os.path.abspath(__file__))
+        #ログファイルのフルパス
+        self.log_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), LOGS_FILE)
 
         self.setWindowTitle('SD Image Filesize Diet')
         self.setGeometry(100, 100, 640, 480)
@@ -307,7 +324,6 @@ class MainWindow(QMainWindow):
         else:
             mes = f'Converting... [{donefilenum:0{self.totalfilestrlen}}/{self.totalfilenum:0{self.totalfilestrlen}}]'
             self.statusBar.showMessage(mes)
-            pvsubfunc.dbgprint(mes)
 
     # 設定値更新時処理
     def update_jpgquality_values(self):
@@ -356,9 +372,31 @@ class MainWindow(QMainWindow):
         if all_files:
             self.fileListWidget.addItems(all_files)  # リストに追加
 
+        # ドロップしたファイルの1番目だけをログ出力
+        if len(all_files) == 0 or len(file_paths) == 0:
+            logger.log("info", f"No target files")
+        else:
+            logger.log("info", f"dropeed files {len(all_files)}, {path}")
+
         self.statusBar.showMessage(f'Droped {len(all_files)} files.')
         if len(all_files) == 0:
             self.play_wave(self.soundng)
+
+    # 右クリックメニュー登録処理
+    def contextMenuEvent(self, event):
+        menu = QMenu(self)
+
+        action1 = QAction("ログファイルを開く", self)
+        menu.addAction(action1)
+        action1.triggered.connect(self.open_log_file)
+        menu.exec(event.globalPos())
+
+    # 右クリックメニュー - ログファイルを開く
+    def open_log_file(self):
+        if os.path.exists(self.log_file_path):
+            QDesktopServices.openUrl(QUrl.fromLocalFile(self.log_file_path))
+        else:
+            self.statusBar.showMessage(f"ログファイルがありません: {self.log_file_path}")
 
     def get_img_files_in_folder(self, folder_path):
         # フォルダ内の全ての画像ファイルを再帰的に取得
@@ -390,41 +428,41 @@ class MainWindow(QMainWindow):
     #設定ファイルの読込
     def load_settings(self):
         try:
-            self.quality = int(str(pvsubfunc.read_value_from_config(SETTINGS_FILE, JPG_QUALITY)))
+            self.quality = int(str(subfunc.read_value_from_config(SETTINGS_FILE, JPG_QUALITY)))
         except Exception as e:
             self.quality = 85
         if self.quality < 1 or self.quality > 100:
             self.quality = 85
         try:
-            self.threadsnum = int(str(pvsubfunc.read_value_from_config(SETTINGS_FILE, THREADS_NUM)))
+            self.threadsnum = int(str(subfunc.read_value_from_config(SETTINGS_FILE, THREADS_NUM)))
         except Exception as e:
             self.threadsnum = os.cpu_count() - 1
         if self.threadsnum < 1 or self.threadsnum > os.cpu_count():
             self.threadsnum = os.cpu_count() - 1
         if self.threadsnum < 1:
             self.threadsnum = 1 #今どき、1スレッドのCPUはないでしょうけど念の為
-        self.keepTimestamp = pvsubfunc.read_value_from_config(SETTINGS_FILE, KEEP_TIMESTAMP)
+        self.keepTimestamp = subfunc.read_value_from_config(SETTINGS_FILE, KEEP_TIMESTAMP)
         if self.keepTimestamp is None:
             self.keepTimestamp = True
-        self.imgtype = pvsubfunc.read_value_from_config(SETTINGS_FILE, IMG_TYPE)
+        self.imgtype = subfunc.read_value_from_config(SETTINGS_FILE, IMG_TYPE)
         if self.imgtype is None:
             self.imgtype = "jpg"
-        self.outputdir = pvsubfunc.read_value_from_config(SETTINGS_FILE, OUTPUT_DIRNAME)
+        self.outputdir = subfunc.read_value_from_config(SETTINGS_FILE, OUTPUT_DIRNAME)
         if self.outputdir is None:
             self.outputdir = "__outputdir"
-        self.soundok = pvsubfunc.read_value_from_config(SETTINGS_FILE, SOUND_OK)
+        self.soundok = subfunc.read_value_from_config(SETTINGS_FILE, SOUND_OK)
         if self.soundok is None:
             self.soundok = "ok.wav"
-        self.soundng = pvsubfunc.read_value_from_config(SETTINGS_FILE, SOUND_NG)
+        self.soundng = subfunc.read_value_from_config(SETTINGS_FILE, SOUND_NG)
         if self.soundng is None:
             self.soundng = "ng.wav"
 
         #self.setGeometry(100, 100, 640, 480)    #位置とサイズ
         try:
-            geox = pvsubfunc.read_value_from_config(SETTINGS_FILE, GEOMETRY_X)
-            geoy = pvsubfunc.read_value_from_config(SETTINGS_FILE, GEOMETRY_Y)
-            geow = pvsubfunc.read_value_from_config(SETTINGS_FILE, GEOMETRY_W)
-            geoh = pvsubfunc.read_value_from_config(SETTINGS_FILE, GEOMETRY_H)
+            geox = subfunc.read_value_from_config(SETTINGS_FILE, GEOMETRY_X)
+            geoy = subfunc.read_value_from_config(SETTINGS_FILE, GEOMETRY_Y)
+            geow = subfunc.read_value_from_config(SETTINGS_FILE, GEOMETRY_W)
+            geoh = subfunc.read_value_from_config(SETTINGS_FILE, GEOMETRY_H)
         except Exception as e:
             self.setGeometry(0, 0, 640, 480)    #位置とサイズ
         if any(val is None for val in [geox, geoy, geow, geoh]):
@@ -434,18 +472,18 @@ class MainWindow(QMainWindow):
 
     #設定ファイルの保存
     def save_settings(self):
-        pvsubfunc.write_value_to_config(SETTINGS_FILE, IMG_TYPE, self.imgtype)
-        pvsubfunc.write_value_to_config(SETTINGS_FILE, JPG_QUALITY, self.quality)
-        pvsubfunc.write_value_to_config(SETTINGS_FILE, THREADS_NUM, self.threadsnum)
-        pvsubfunc.write_value_to_config(SETTINGS_FILE, KEEP_TIMESTAMP, self.keepTimestamp)
-        pvsubfunc.write_value_to_config(SETTINGS_FILE, OUTPUT_DIRNAME, self.outputdir)
-        pvsubfunc.write_value_to_config(SETTINGS_FILE, SOUND_OK, self.soundok)
-        pvsubfunc.write_value_to_config(SETTINGS_FILE, SOUND_NG, self.soundng)
+        subfunc.write_value_to_config(SETTINGS_FILE, IMG_TYPE, self.imgtype)
+        subfunc.write_value_to_config(SETTINGS_FILE, JPG_QUALITY, self.quality)
+        subfunc.write_value_to_config(SETTINGS_FILE, THREADS_NUM, self.threadsnum)
+        subfunc.write_value_to_config(SETTINGS_FILE, KEEP_TIMESTAMP, self.keepTimestamp)
+        subfunc.write_value_to_config(SETTINGS_FILE, OUTPUT_DIRNAME, self.outputdir)
+        subfunc.write_value_to_config(SETTINGS_FILE, SOUND_OK, self.soundok)
+        subfunc.write_value_to_config(SETTINGS_FILE, SOUND_NG, self.soundng)
 
-        pvsubfunc.write_value_to_config(SETTINGS_FILE, GEOMETRY_X, self.geometry().x())
-        pvsubfunc.write_value_to_config(SETTINGS_FILE, GEOMETRY_Y, self.geometry().y())
-        pvsubfunc.write_value_to_config(SETTINGS_FILE, GEOMETRY_W, self.geometry().width())
-        pvsubfunc.write_value_to_config(SETTINGS_FILE, GEOMETRY_H, self.geometry().height())
+        subfunc.write_value_to_config(SETTINGS_FILE, GEOMETRY_X, self.geometry().x())
+        subfunc.write_value_to_config(SETTINGS_FILE, GEOMETRY_Y, self.geometry().y())
+        subfunc.write_value_to_config(SETTINGS_FILE, GEOMETRY_W, self.geometry().width())
+        subfunc.write_value_to_config(SETTINGS_FILE, GEOMETRY_H, self.geometry().height())
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

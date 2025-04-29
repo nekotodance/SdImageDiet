@@ -9,10 +9,11 @@ def get_exifcomment_from_file(file):
     try:
         img = Image.open(file)
         exif_data = img.info.get("exif")
-        if exif_data is None:
-            return None
+        if exif_data is None: return None
         exif_dict = piexif.load(exif_data)
+        if exif_dict is None: return None
         comment = exif_dict["Exif"].get(piexif.ExifIFD.UserComment)
+        if comment is None: return None
         if comment.startswith(b'UNICODE\x00'):
             comment = comment[len(b'UNICODE\x00'):]
         comment = comment.replace(b'\x00', b'')

@@ -1,4 +1,4 @@
-## SdImageDietについて 0.1.8
+## SdImageDietについて 0.1.9
 StableDiffusionで作成したPNG,JPG,WEBP,AVIF画像のプロンプト情報を保持したまま【**マルチスレッド**】で高速にJPG,WEBP画像に変換します  
 主にPrompt情報は後で参考にしたいが、画像品質を犠牲にしてファイルサイズを小さくしたい利用シーンを想定しています  
 また、比較的どうでも良い画像ファイルの容量削減なんかにも便利です  
@@ -108,6 +108,10 @@ options:
   --threads THREADS  : Number of threads for parallel processing. Default is CPU Max Thread - 1.  
   --keeptimestamp    : keep the original timestamp of input files.  
 
+## その他
+ver 0.1.9にてpyファイルと同じ階層にlogファイルを追加しています  
+右クリック-ログファイルを開くにて標準のエディタで開きます  
+
 ## 注意事項
 - 厳密なファイルチェックはしていないので気をつけてください（例えばとてつもなく大きいサイズなど）  
 - Prompt情報はExifのUserCommentに保存しています  
@@ -123,6 +127,7 @@ options:
 > 複数フォルダにまたがるファイルの入力をを禁止して、入力パスに対してoutput dirを付与する方が使い勝手が良いのかもしれません。。（検討中）  
 
 ## 変更履歴
+- 0.1.9 想定外exifコメントの判定修正、まれに変換に失敗する事があるためログ出力追加、他
 - 0.1.8 pipライブラリのバージョンを固定に修正
 - 0.1.7 QualityとImgTypeを少し目立つように修正、他
 - 0.1.6 主にreadmeの修正、またメタ情報を持たないファイルを入力した場合に落ちる場合があったのを修正
