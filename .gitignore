@@ -2,6 +2,7 @@ SdImageDietGUI.lnk
 SdImageDietGUI_settings.json
 *.xcf
 old-src/
+test_code/
 .vscode/
 test.py
 

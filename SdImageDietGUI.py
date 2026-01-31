@@ -13,6 +13,8 @@ from PIL import Image
 import SdImageDiet
 import subfunc
 
+WINDOW_TITLE = "SD Image Filesize Diet 0.1.10"
+
 # 設定ファイル
 SETTINGS_FILE = "SdImageDietGUI_settings.json"
 GEOMETRY_X = "geometry-x"
@@ -99,7 +101,7 @@ class MainWindow(QMainWindow):
         #ログファイルのフルパス
         self.log_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), LOGS_FILE)
 
-        self.setWindowTitle('SD Image Filesize Diet')
+        self.setWindowTitle(WINDOW_TITLE)
         self.setGeometry(100, 100, 640, 480)
         # 設定ファイルが存在しない場合初期値で作成する
         if not os.path.exists(SETTINGS_FILE):
@@ -319,8 +321,10 @@ class MainWindow(QMainWindow):
             self.clearButton.setEnabled(True)
             if (self.converted_error == 0):
                 self.play_wave(self.soundok)
+                logger.log("info", f"converted files : {donefilenum}")
             else:
                 self.play_wave(self.soundng)
+                logger.log("error", f"convert error : {self.converted_error} / {self.totalfilenum}")
         else:
             mes = f'Converting... [{donefilenum:0{self.totalfilestrlen}}/{self.totalfilenum:0{self.totalfilestrlen}}]'
             self.statusBar.showMessage(mes)
