@@ -13,7 +13,7 @@ from PIL import Image
 import SdImageDiet
 import subfunc
 
-WINDOW_TITLE = "SD Image Filesize Diet 0.1.10"
+WINDOW_TITLE = "SD Image Filesize Diet 0.1.11"
 
 # 設定ファイル
 SETTINGS_FILE = "SdImageDietGUI_settings.json"

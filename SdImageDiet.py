@@ -4,7 +4,7 @@ import shutil
 import sdfileUtility
 
 # 定義
-SUPPORT_INPUT_EXT = (".png", ".jpg", ".webp",".avif")
+SUPPORT_INPUT_EXT = (".png", ".jpg", ".webp",".avif",".bmp")
 
 def convert_imgfile(infile, outfile, imgtype, quality, keeptimestamp):
     sdfileUtility.convert_image(infile, outfile, imgtype, quality)
